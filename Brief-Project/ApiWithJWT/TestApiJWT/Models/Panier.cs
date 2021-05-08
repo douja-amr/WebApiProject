@@ -10,18 +10,12 @@ namespace TestApiJWT.Models
     public class Panier
     {
         [Key]
-        [ForeignKey("UserId")]
-
+        [ForeignKey("userId")]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public DateTime DateCreated { get; set; }
-
-        public DateTime DateModified { get; set; }
-
-        public Double TotalPrice { get; set; }
-
-        public Guid UserId { get; set; }
-
-        public ApplicationUser ApplicationUser { get; set; }
+        public ApplicationUser user { get; set; }
+        public string userId { get; set; }
+        public bool commandStatus { get; set; }
     }
 }

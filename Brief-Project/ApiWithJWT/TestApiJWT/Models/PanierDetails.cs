@@ -10,20 +10,21 @@ namespace TestApiJWT.Models
 {
     public class PanierDetails
     {
-        [Key]
-        [ForeignKey("ProductId,PanierId,")]
+        [ForeignKey("productId , panierId , userid")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string Id { get; set; }
+        public DateTime date { get; set; }
+        public int Quantity { get; set; }
+        public double TotalPrice { get; set; }
 
-        public Guid Id { get; set; }
+        public Panier panier { get; set; }
+        public Guid panierId { get; set; }
 
-        public DateTime DateOfAdd { get; set; }
+        public ApplicationUser user { get; set; }
+        public string userid { get; set; }
 
-        public Guid PanierId { get; set; }
-
-        public Guid ProductId { get; set; }
-
-        public Product Product { get; set; }
-
-        public Panier Panier { get; set; }
+        public Product product { get; set; }
+        public Guid productId { get; set; }
 
 
 

@@ -14,44 +14,168 @@ namespace TestApiJWT.Controllers
     [ApiController]
     public class PanierController : ControllerBase
     {
-        private readonly ApplicationDbContext _adb;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public PanierController(ApplicationDbContext adb, UserManager<ApplicationUser> userManager)
+        ApplicationDbContext _context;
+
+        public PanierController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            _adb = adb;
+            _context = context;
             _userManager = userManager;
+
         }
 
-       /* [HttpPost]
-*/
-        /*public async Task<ActionResult> Create(Panier panier)
+
+        // POST api/<PanierController>
+        //Delete Product 
+        [HttpPost("{id}")]
+        public async Task<IActionResult> Post(Guid id, RegisterModel login, int quantity)
         {
 
-           
+            var user = await _userManager.FindByEmailAsync(login.Email);
+
+            if (id == Guid.Empty)
+                throw new ArgumentNullException(nameof(id));
+            //var user = new RegisterModel();
+            //add new panierwhen we add a new product 
+            ;
+            //db.Users.OrderByDescending(u => u.UserId).FirstOrDefault();
+            //var useridauth = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var existpanier = _context.Paniers.Where(a => a.userId == user.Id).ToList();
+
+            if (existpanier.Count == 0)
+            {
+                Panier panier = new Panier();
+                panier.userId = user.Id;
+                panier.commandStatus = false;
+                _context.Paniers.Add(panier);
+                await _context.SaveChangesAsync();
+
+                var p = _context.Procducts.Where(a => a.Id == id).FirstOrDefault();
+                if (p == null)
+                    throw new ArgumentNullException(nameof(p));
+
+                // int intIdt = db.Users.Max(u => u.UserId);
+
+                PanierDetails panierd = new PanierDetails();
 
 
-            *//* var Currproduct = _adb.Procducts.FirstOrDefault(x => x.CategorieId == product.CategorieId); *//*
+
+                //The id of the user authenticated;
+                panierd.userid = user.Id;
+                panierd.date = DateTime.Today;
+                panierd.productId = id;
+                panierd.panierId = panier.Id;
+                panierd.Quantity = quantity;
+                _context.PanierDetails.Add(panierd);
+                await _context.SaveChangesAsync();
 
 
 
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).;
-          
 
-         *//*   panier.UserId = guid;*//*
+            }
+            else
+            {
+                var lastid = _context.Paniers.Where(a => a.userId == user.Id).OrderByDescending(a => a.Id).FirstOrDefault();
+
+                //var lastid = _context.Panier.Where(a => a.userId == user.Id).Max(s => s.Id).SingleOrDefault();
+                if (lastid.commandStatus == false)
+                {
+
+                    var p = _context.Procducts.Where(a => a.Id == id).FirstOrDefault();
+                    if (p == null)
+                        throw new ArgumentNullException(nameof(p));
+
+                    // int intIdt = db.Users.Max(u => u.UserId);
+
+                    PanierDetails panierd = new PanierDetails();
 
 
-            _adb.Paniers.Add(panier);
+
+                    //The id of the user authenticated;
+                    panierd.userid = user.Id;
+                    panierd.date = DateTime.Today;
+                    panierd.productId = id;
+                    panierd.panierId = lastid.Id;
+                    panierd.Quantity = quantity;
+                    _context.PanierDetails.Add(panierd);
+                    await _context.SaveChangesAsync();
 
 
 
-            await _adb.SaveChangesAsync();
-
-            return Ok(panier);
 
 
-        }*/
+                }
+                else
+                {
+
+                    Panier panier = new Panier();
+                    panier.userId = user.Id;
+                    panier.commandStatus = false;
+                    _context.Paniers.Add(panier);
+                    await _context.SaveChangesAsync();
+
+
+                    var p = _context.Procducts.Where(a => a.Id == id).FirstOrDefault();
+                    if (p == null)
+                        throw new ArgumentNullException(nameof(p));
+
+                    // int intIdt = db.Users.Max(u => u.UserId);
+
+                    PanierDetails panierd = new PanierDetails();
+
+
+
+                    //The id of the user authenticated;
+                    panierd.userid = user.Id;
+                    panierd.date = DateTime.Today;
+                    panierd.productId = id;
+                    panierd.panierId = panier.Id;
+                    panierd.Quantity = quantity;
+                    _context.PanierDetails.Add(panierd);
+                    await _context.SaveChangesAsync();
+
+
+
+
+                }
+            }
+            return Ok();
+        }
+
+
+        //Delete Product 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+
+            if (id == Guid.Empty)
+                throw new ArgumentNullException(nameof(id));
+
+            var p = _context.PanierDetails.Where(a => a.productId == id).FirstOrDefault();
+            if (p == null)
+            {
+                throw new ArgumentNullException(nameof(p));
+            }
+
+            _context.PanierDetails.Remove(p);
+            await _context.SaveChangesAsync();
+            return Ok(p);
+        }
+
+
+        public double totalPrice(Guid id)
+        {
+
+
+
+            var total = _context.PanierDetails.Where(a => a.panierId == id).Sum(q => q.Quantity * q.product.Price);
+
+            return (double)total;
+
+
+        }
+
 
     }
 }
