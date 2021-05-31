@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TestApiJWT.Migrations
 {
-    public partial class initialCreate : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -172,18 +172,15 @@ namespace TestApiJWT.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalPrice = table.Column<double>(type: "float", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    userId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    commandStatus = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Paniers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Paniers_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Paniers_AspNetUsers_userId",
+                        column: x => x.userId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -216,27 +213,25 @@ namespace TestApiJWT.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalPrice = table.Column<double>(type: "float", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PanierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    PanierId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PanierId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Orders_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Orders_Paniers_PanierId",
-                        column: x => x.PanierId,
+                        name: "FK_Orders_Paniers_PanierId1",
+                        column: x => x.PanierId1,
                         principalTable: "Paniers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -262,23 +257,32 @@ namespace TestApiJWT.Migrations
                 name: "PanierDetails",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DateOfAdd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PanierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    TotalPrice = table.Column<double>(type: "float", nullable: false),
+                    panierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    userid = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    productId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PanierDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PanierDetails_Paniers_PanierId",
-                        column: x => x.PanierId,
+                        name: "FK_PanierDetails_AspNetUsers_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PanierDetails_Paniers_panierId",
+                        column: x => x.panierId,
                         principalTable: "Paniers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PanierDetails_Procducts_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_PanierDetails_Procducts_productId",
+                        column: x => x.productId,
                         principalTable: "Procducts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -329,29 +333,34 @@ namespace TestApiJWT.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_ApplicationUserId",
+                name: "IX_Orders_PanierId1",
                 table: "Orders",
-                column: "ApplicationUserId");
+                column: "PanierId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_PanierId",
+                name: "IX_Orders_UserId",
                 table: "Orders",
-                column: "PanierId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PanierDetails_PanierId",
+                name: "IX_PanierDetails_panierId",
                 table: "PanierDetails",
-                column: "PanierId");
+                column: "panierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PanierDetails_ProductId",
+                name: "IX_PanierDetails_productId",
                 table: "PanierDetails",
-                column: "ProductId");
+                column: "productId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Paniers_ApplicationUserId",
+                name: "IX_PanierDetails_userid",
+                table: "PanierDetails",
+                column: "userid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Paniers_userId",
                 table: "Paniers",
-                column: "ApplicationUserId");
+                column: "userId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Procducts_CategorieId",

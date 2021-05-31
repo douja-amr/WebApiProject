@@ -1,19 +1,16 @@
-﻿
-using Ecommercewebsite.Repository;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TestApiJWT.Models;
+using TestApiJWT.Services;
 
-namespace Ecommercewebsite.Controllers
+namespace TestApiJWT.Controllers
 {
-
-
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         IUsers _users;
@@ -59,7 +56,5 @@ namespace Ecommercewebsite.Controllers
             await _users.Delete(id);
             return Ok();
         }
-
-
     }
 }

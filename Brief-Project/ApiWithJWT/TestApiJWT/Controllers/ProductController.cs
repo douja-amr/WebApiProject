@@ -55,10 +55,10 @@ namespace TestApiJWT.Controllers
 
             product.CategorieId = CategorieId;
 
-             _adb.Procducts.Add(product);
+            _adb.Procducts.Add(product);
 
 
-             await _adb.SaveChangesAsync();
+            await _adb.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetByid), new { CategorieId = CategorieId, Id = product.Id }, product);
 
@@ -80,7 +80,16 @@ namespace TestApiJWT.Controllers
 
         }
 
+        [HttpDelete]
+        public async Task Delete(string id)
+        {
+            var deleteproduct = await _adb.Procducts.FindAsync(id);
+            _adb.Procducts.Remove(deleteproduct);
+            await _adb.SaveChangesAsync();
 
+
+
+        }
 
     }
 

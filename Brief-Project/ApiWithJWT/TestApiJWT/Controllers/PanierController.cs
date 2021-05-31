@@ -27,7 +27,7 @@ namespace TestApiJWT.Controllers
 
 
         // POST api/<PanierController>
-        //Delete Product 
+        
         [HttpPost("{id}")]
         public async Task<IActionResult> Post(Guid id, RegisterModel login, int quantity)
         {
@@ -164,7 +164,7 @@ namespace TestApiJWT.Controllers
         }
 
 
-        public double totalPrice(Guid id)
+      /*  public double totalPrice(Guid id)
         {
 
 
@@ -174,7 +174,7 @@ namespace TestApiJWT.Controllers
             return (double)total;
 
 
-        }
+        }*/
 
 
     }

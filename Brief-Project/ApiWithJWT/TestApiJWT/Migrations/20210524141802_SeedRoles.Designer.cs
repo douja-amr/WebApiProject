@@ -10,7 +10,7 @@ using TestApiJWT.Models;
 namespace TestApiJWT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210428101450_SeedRoles")]
+    [Migration("20210524141802_SeedRoles")]
     partial class SeedRoles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -269,26 +269,20 @@ namespace TestApiJWT.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<int>("PanierId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("PanierId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("PanierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("PanierId1");
 
-                    b.HasIndex("PanierId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -299,48 +293,50 @@ namespace TestApiJWT.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<bool>("commandStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("userId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("userId");
 
                     b.ToTable("Paniers");
                 });
 
             modelBuilder.Entity("TestApiJWT.Models.PanierDetails", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("DateOfAdd")
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("date")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PanierId")
+                    b.Property<Guid>("panierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<Guid>("productId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("userid")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PanierId");
+                    b.HasIndex("panierId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("productId");
+
+                    b.HasIndex("userid");
 
                     b.ToTable("PanierDetails");
                 });
@@ -439,47 +435,51 @@ namespace TestApiJWT.Migrations
 
             modelBuilder.Entity("TestApiJWT.Models.Order", b =>
                 {
-                    b.HasOne("TestApiJWT.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("TestApiJWT.Models.Panier", "Panier")
                         .WithMany()
-                        .HasForeignKey("PanierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PanierId1");
 
-                    b.Navigation("ApplicationUser");
+                    b.HasOne("TestApiJWT.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Panier");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TestApiJWT.Models.Panier", b =>
                 {
-                    b.HasOne("TestApiJWT.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("TestApiJWT.Models.ApplicationUser", "user")
                         .WithMany()
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("userId");
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("TestApiJWT.Models.PanierDetails", b =>
                 {
-                    b.HasOne("TestApiJWT.Models.Panier", "Panier")
+                    b.HasOne("TestApiJWT.Models.Panier", "panier")
                         .WithMany()
-                        .HasForeignKey("PanierId")
+                        .HasForeignKey("panierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestApiJWT.Models.Product", "Product")
+                    b.HasOne("TestApiJWT.Models.Product", "product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("productId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Panier");
+                    b.HasOne("TestApiJWT.Models.ApplicationUser", "user")
+                        .WithMany()
+                        .HasForeignKey("userid");
 
-                    b.Navigation("Product");
+                    b.Navigation("panier");
+
+                    b.Navigation("product");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("TestApiJWT.Models.Product", b =>

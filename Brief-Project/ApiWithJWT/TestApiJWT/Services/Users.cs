@@ -1,23 +1,21 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TestApiJWT.Models;
 
-namespace Ecommercewebsite.Repository
+namespace TestApiJWT.Services
 {
     public class Users : IUsers
     {
-
         private readonly ApplicationDbContext _context;
         public Users(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async  Task<List<ApplicationUser>> GetUsers()
+        public async Task<List<ApplicationUser>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
@@ -25,14 +23,14 @@ namespace Ecommercewebsite.Repository
         public async Task<ApplicationUser> GetUsers(string id)
         {
             return await _context.Users.FindAsync(id);
-           
+
         }
 
         public async Task Update(ApplicationUser user)
         {
-              _context.Users.Update(user);
-             await _context.SaveChangesAsync();
-            
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
         }
 
         public async Task<ApplicationUser> Create(ApplicationUser user)
@@ -45,10 +43,10 @@ namespace Ecommercewebsite.Repository
 
         public async Task Delete(string id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(i => i.Id== id);
+            var user = await _context.Users.FirstOrDefaultAsync(i => i.Id == id);
             _context.Users.Remove(user);
             var save = await _context.SaveChangesAsync();
-            
+
         }
     }
 }
